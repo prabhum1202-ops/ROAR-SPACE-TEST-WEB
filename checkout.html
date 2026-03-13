@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Checkout</title>
+  </head>
+  <body>
+    <h2>Checkout</h2>
+
+    <form id="checkout-form">
+      <h3>Customer Details</h3>
+
+      <input
+        type="text"
+        id="name"
+        placeholder="Full Name"
+        required
+      /><br /><br />
+      <input
+        type="text"
+        id="phone"
+        placeholder="Phone Number"
+        required
+      /><br /><br />
+      <input
+        type="text"
+        id="address"
+        placeholder="Address"
+        required
+      /><br /><br />
+
+      <h3>Payment Method</h3>
+
+      <label
+        ><input type="radio" name="payment" value="COD" checked /> Cash on
+        Delivery</label
+      ><br />
+      <label><input type="radio" name="payment" value="UPI" /> UPI</label><br />
+      <label
+        ><input type="radio" name="payment" value="Card" /> Debit/Credit
+        Card</label
+      ><br /><br />
+
+      <h3>Order Summary</h3>
+      <div id="order-summary"></div>
+      <h3 id="total"></h3>
+
+      <button type="submit">Place Order</button>
+    </form>
+
+    <script>
+      // Load cart
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const summaryDiv = document.getElementById("order-summary");
+
+      let total = 0;
+
+      if (cart.length === 0) {
+        summaryDiv.innerHTML = "<p>Your cart is empty</p>";
+      } else {
+        cart.forEach((item) => {
+          const qty = item.qty || item.quantity || 1;
+          const itemTotal = item.price * qty;
+          total += itemTotal;
+
+          summaryDiv.innerHTML += `
+      <p>${item.name} — ₹${item.price} x ${qty} = ₹${itemTotal}</p>
+    `;
+        });
+      }
+
+      document.getElementById("total").innerText = "Total: ₹" + total;
+
+      // Place order
+      document
+        .getElementById("checkout-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          if (cart.length === 0) {
+            alert("Cart is empty!");
+            return;
+          }
+
+          const payment = document.querySelector(
+            'input[name="payment"]:checked',
+          ).value;
+
+          const order = {
+            orderId: "ORD" + Date.now(),
+            name: name.value,
+            phone: phone.value,
+            address: address.value,
+            payment: payment,
+            items: cart,
+            total: total,
+            date: new Date().toLocaleString(),
+          };
+
+          // Save order
+          localStorage.setItem("lastOrder", JSON.stringify(order));
+
+          // Save all orders (for admin later)
+          let orders = JSON.parse(localStorage.getItem("orders")) || [];
+          orders.push(order);
+          localStorage.setItem("orders", JSON.stringify(orders));
+
+          localStorage.removeItem("cart");
+
+          // 🔗 Redirect to success page
+          window.location.href = "success.html";
+        });
+    </script>
+  </body>
+</html>

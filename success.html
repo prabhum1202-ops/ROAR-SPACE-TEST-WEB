@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Order Success</title>
+  </head>
+  <body>
+    <h2>Order Placed Successfully ✅</h2>
+
+    <div id="details"></div>
+
+    <a href="index.html">Continue Shopping</a>
+
+    <script>
+      const order = JSON.parse(localStorage.getItem("lastOrder"));
+      const div = document.getElementById("details");
+
+      if (order) {
+        let itemsHTML = "";
+
+        order.items.forEach((item) => {
+          const qty = item.qty || item.quantity || 1;
+          itemsHTML += `<p>${item.name} — ₹${item.price} x ${qty}</p>`;
+        });
+
+        div.innerHTML = `
+    <p><b>Order ID:</b> ${order.orderId}</p>
+    <p><b>Name:</b> ${order.name}</p>
+    <p><b>Phone:</b> ${order.phone}</p>
+    <p><b>Address:</b> ${order.address}</p>
+    <p><b>Payment:</b> ${order.payment}</p>
+    <h3>Items</h3>
+    ${itemsHTML}
+    <h3>Total: ₹${order.total}</h3>
+    <p><b>Date:</b> ${order.date}</p>
+  `;
+      } else {
+        div.innerHTML = "<p>No order found.</p>";
+      }
+    </script>
+  </body>
+</html>
